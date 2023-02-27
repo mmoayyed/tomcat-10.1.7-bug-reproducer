@@ -1,219 +1,64 @@
-# IMPORTANT NOTE<br/>******************************************************<br/>This repository is always automatically generated from the CAS Initializr. Do NOT submit pull requests here as the change-set will be overwritten on the next sync.To learn more, please visit the [CAS documentation](https://apereo.github.io/cas).<br/>******************************************************<br/>
-Apereo CAS WAR Overlay Template
-=====================================
+## Instructions
 
-WAR Overlay Type: `cas-overlay`
+You will need JDK 17:
 
-# Versions
-   
+```
+openjdk version "17.0.5" 2022-10-18 LTS
+OpenJDK Runtime Environment Zulu17.38+21-CA (build 17.0.5+8-LTS)
+OpenJDK 64-Bit Server VM Zulu17.38+21-CA (build 17.0.5+8-LTS, mixed mode, sharing)
+```
 
-- CAS Server `7.0.0-SNAPSHOT`
-- JDK `17`
-                     
-# Build
-
-To build the project, use:
+Then run:
 
 ```bash
-# Use --refresh-dependencies to force-update SNAPSHOT versions
-./gradlew[.bat] clean build
+./gradlew clean build
 ```
 
-To see what commands/tasks are available to the build script, run:
+Then run the app:
 
 ```bash
-./gradlew[.bat] tasks
+java -jar build/libs/cas.war --server.ssl.enabled=false --server.port=8080
 ```
 
-If you need to, on Linux/Unix systems, you can delete all the existing artifacts
-(artifacts and metadata) Gradle has downloaded using:
-
-```bash
-# Only do this when absolutely necessary
-rm -rf $HOME/.gradle/caches/
-```
-
-Same strategy applies to Windows too, provided you switch `$HOME` to its equivalent in the above command.
-
-# Keystore
-
-For the server to run successfully, you might need to create a keystore file.
-This can either be done using the JDK's `keytool` utility or via the following command:
-
-```bash
-./gradlew[.bat] createKeystore
-```
-
-Use the password `changeit` for both the keystore and the key/certificate entries. 
-Ensure the keystore is loaded up with keys and certificates of the server.
-
-## Extension Modules
-
-Extension modules may be specified under the `dependencies` block of the [Gradle build script](build.gradle):
-
-```gradle
-dependencies {
-    implementation "org.apereo.cas:cas-server-some-module"
-    ...
-}
-```
-
-To collect the list of all project modules and dependencies in the overlay:
-
-```bash
-./gradlew[.bat] dependencies
-```                                                                       
-
-# Deployment
-
-On a successful deployment via the following methods, the server will be available at:
-
-
-* `https://localhost:8443/cas`
-
-
-
-  
-## Executable WAR
-
-Run the server web application as an executable WAR. Note that running an executable WAR requires CAS to use an embedded container such as Apache Tomcat, Jetty, etc.
-
-The current servlet container is specified as `-tomcat`.
-
-```bash
-java -jar build/libs/cas.war
-```
-
-Or via:
-
-```bash
-./gradlew[.bat] run
-```
-
-Debug the CAS web application as an executable WAR:
-
-```bash
-./gradlew[.bat] debug
-```
-       
-Or via:
-
-```bash
-java -Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=y -jar build/libs/cas.war
-```
-
-Run the CAS web application as a *standalone* executable WAR:
-
-```bash
-./gradlew[.bat] clean executable
-```
-
-## External
-
-Deploy the binary web application file in `build/libs` after a successful build to a servlet container of choice.
-
-# Docker
-
-The following strategies outline how to build and deploy CAS Docker images.
-
-## Jib
-
-The overlay embraces the [Jib Gradle Plugin](https://github.com/GoogleContainerTools/jib) to provide easy-to-use out-of-the-box tooling for building CAS docker images. Jib is an open-source Java containerizer from Google that lets Java developers build containers using the tools they know. It is a container image builder that handles all the steps of packaging your application into a container image. It does not require you to write a Dockerfile or have Docker installed, and it is directly integrated into the overlay.
-
-```bash
-# Running this task requires that you have Docker installed and running.
-./gradlew build jibDockerBuild
-```
-
-## Dockerfile
-
-You can also use the native Docker tooling and the provided `Dockerfile` to build and run.
-
-```bash
-chmod +x *.sh
-./docker-build.sh
-./docker-run.sh
-```
-
-For convenience, an additional `docker-compose.yml` is also provided to orchestrate the build:
-
-```bash  
-docker-compose build
-```
-
-
-# CAS Command-line Shell
-
-To launch into the CAS command-line shell:
-
-```bash
-./gradlew[.bat] downloadShell runShell
-```
-
-# Retrieve Overlay Resources
-
-To fetch and overlay a CAS resource or view, use:
-
-```bash
-./gradlew[.bat] getResource -PresourceName=[resource-name]
-```
-
-# Create User Interface Themes Structure
-
-You can use the overlay to construct the correct directory structure for custom user interface themes:
-
-```bash
-./gradlew[.bat] createTheme -Ptheme=redbeard
-```
-
-The generated directory structure should match the following:
+See the error:
 
 ```
-├── redbeard.properties
-├── static
-│ └── themes
-│     └── redbeard
-│         ├── css
-│         │ └── cas.css
-│         └── js
-│             └── cas.js
-└── templates
-    └── redbeard
-        └── fragments
-```
-
-HTML templates and fragments can be moved into the above directory structure, 
-and the theme may be assigned to applications for use.
-
-# List Overlay Resources
- 
-To list all available CAS views and templates:
-
-```bash
-./gradlew[.bat] listTemplateViews
-```
-
-To unzip and explode the CAS web application file and the internal resources jar:
-
-```bash
-./gradlew[.bat] explodeWar
-```
-
-# Configuration
-
-- The `etc` directory contains the configuration files and directories that need to be copied to `/etc/cas/config`.
-
-```bash
-./gradlew[.bat] copyCasConfiguration
-```
-
-- The specifics of the build are controlled using the `gradle.properties` file.
-
-## Configuration Metadata
-
-Configuration metadata allows you to export collection of CAS properties as a report into a file 
-that can later be examined. You will find a full list of CAS settings along with notes, types, default and accepted values:
-
-```bash
-./gradlew exportConfigMetadata
-```                           
+Caused by: java.lang.NullPointerException: Cannot invoke "java.net.URL.getProtocol()" because "url" is null
+    at org.apache.catalina.webresources.StandardRoot$BaseLocation.<init>(StandardRoot.java:815) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.webresources.StandardRoot.createWebResourceSet(StandardRoot.java:357) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.webresources.StandardRoot.processWebInfLib(StandardRoot.java:588) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.webresources.StandardRoot.startInternal(StandardRoot.java:721) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.StandardContext.resourcesStart(StandardContext.java:4566) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4699) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[?:?]
+    at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:10.1.7-dev]
+    at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[?:?]
+    at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:871) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:846) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1332) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1322) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[?:?]
+    at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:75) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:10.1.7-dev]
+    at java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[?:?]
+    at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:871) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:241) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.StandardService.startInternal(StandardService.java:428) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:913) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.apache.catalina.startup.Tomcat.start(Tomcat.java:485) ~[tomcat-embed-core-10.1.7-SNAPSHOT.jar!/:?]
+    at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.initialize(TomcatWebServer.java:123) ~[spring-boot-3.0.2.jar!/:3.0.2]
+    at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.<init>(TomcatWebServer.java:104) ~[spring-boot-3.0.2.jar!/:3.0.2]
+    at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getTomcatWebServer(TomcatServletWebServerFactory.java:486) ~[spring-boot-3.0.2.jar!/:3.0.2]
+    at org.apereo.cas.tomcat.CasTomcatServletWebServerFactory.getTomcatWebServer(CasTomcatServletWebServerFactory.java:79) ~[cas-server-webapp-init-tomcat-7.0.0-RC4.jar!/:7.0.0-RC4]
+    at org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory.getWebServer(TomcatServletWebServerFactory.java:210) ~[spring-boot-3.0.2.jar!/:3.0.2]
+    at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.createWebServer(ServletWebServerApplicationContext.java:183) ~[spring-boot-3.0.2.jar!/:3.0.2]
+    at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:161) ~[spring-boot-3.0.2.jar!/:3.0.2]
+    ... 15 more
+```     
