@@ -53,6 +53,12 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+
+    maven {
+        url "https://repository.apache.org/content/repositories/snapshots"
+        mavenContent { snapshotsOnly() }
+    }
+
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots'
         mavenContent { snapshotsOnly() }
@@ -89,6 +95,14 @@ configurations.all {
         def failIfConflict = project.hasProperty("failOnVersionConflict") && Boolean.valueOf(project.getProperty("failOnVersionConflict"))
         if (failIfConflict) {
             failOnVersionConflict()
+        }
+
+        eachDependency { DependencyResolveDetails dependency ->
+            def requested = dependency.requested
+            if (requested.group.startsWith("org.apache.tomcat") && !requested.name.equals("jakartaee-migration"))  {
+                // println "Using tomcat version ${tomcatVersion} for ${requested.group}:${requested.name}"
+                dependency.useVersion("${tomcatVersion}")
+            }
         }
     }
     exclude(group: "cglib", module: "cglib")
@@ -145,5 +159,9 @@ dependencies {
         }
     }
     developmentOnly "org.springframework.boot:spring-boot-devtools:${project.springBootVersion}"
+
+    if (project.appServer == "-tomcat") {
+        implementation "org.apereo.cas:cas-server-webapp-init${project.appServer}:${project.'cas.version'}"
+    }
 }
 

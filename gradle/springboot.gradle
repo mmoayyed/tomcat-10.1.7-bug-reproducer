@@ -136,8 +136,8 @@ bootWar {
 
 
             provided = false
-            excludes = ["WEB-INF/lib/servlet-api-2*.jar"]
-
+            excludes = ["WEB-INF/lib/servlet-api-2*.jar", "WEB-INF/lib/tomcat-*.jar"]
+            
             /*
             excludes = ["WEB-INF/lib/somejar-1.0*"]
             enableCompilation = true
